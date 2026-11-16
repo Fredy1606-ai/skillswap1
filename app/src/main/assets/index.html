@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SkillSwap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0c;--card:#16161a;--card2:#1f1f25;--line:#2b2b33;--pink:#f9a8e0;--pink2:#ffd0f1;--pinkdim:rgba(249,168,224,.13);--text:#f4f4f6;--muted:#9d9da8;--ok:#7be3a6;--warn:#ffd27a;--bad:#ff8f8f;--r:14px}
+*{box-sizing:border-box}
+html,body{margin:0;background:#000;color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:15px;line-height:1.45}
+#app{max-width:480px;margin:0 auto;min-height:100vh;background:var(--bg);position:relative;padding-bottom:86px}
+.top{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;padding:12px 18px;background:rgba(10,10,12,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.logo{font-family:Anton,Impact,sans-serif;font-size:25px;letter-spacing:.4px;cursor:pointer}
+.logo b{color:var(--pink);font-weight:400}
+.bell{position:relative;background:var(--card2);border:1px solid var(--line);color:var(--text);border-radius:999px;width:40px;height:40px;cursor:pointer;font-size:17px}
+main{padding:16px 18px}
+h1,h2{font-family:Anton,Impact,sans-serif;font-weight:400;letter-spacing:.3px;margin:4px 0 12px;line-height:1.1}
+h1{font-size:31px}
+h2{font-size:21px;color:var(--pink);margin-top:22px}
+h3{font-size:16px;margin:0 0 4px}
+p{margin:4px 0 8px}
+.muted{color:var(--muted)}.small{font-size:13px}.xs{font-size:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:12px}
+.card.click{cursor:pointer}.card.click:hover{border-color:#44444f}
+.row{display:flex;gap:10px;align-items:center}
+.between{justify-content:space-between}.wrap{flex-wrap:wrap}.grow{flex:1;min-width:0}.top8{margin-top:8px}.top14{margin-top:14px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center}
+.stat b{display:block;font-size:20px;color:var(--pink)}
+.stat span{font-size:11.5px;color:var(--muted)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:0;border-radius:999px;padding:11px 18px;font:inherit;font-weight:600;cursor:pointer;background:var(--pink);color:#111;text-decoration:none;white-space:nowrap}
+.btn.sec{background:transparent;color:var(--text);border:1px solid var(--line)}
+.btn.ghost{background:var(--pinkdim);color:var(--pink)}
+.btn.danger{background:transparent;color:var(--bad);border:1px solid #4d2c31}
+.btn.sm{padding:7px 12px;font-size:13px}
+.btn.block{width:100%}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.chip{display:inline-block;padding:4px 10px;border-radius:999px;background:var(--card2);border:1px solid var(--line);font-size:12.5px;margin:2px 4px 2px 0}
+.chip.p{background:var(--pinkdim);border-color:transparent;color:var(--pink)}
+.chip.ok{background:rgba(123,227,166,.12);border-color:transparent;color:var(--ok)}
+.chip .x{cursor:pointer;margin-left:6px;opacity:.7}
+.filters{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin:8px 0 10px}
+.filters button,.tabs button{flex:none;cursor:pointer;font:inherit;font-size:13px;padding:7px 12px;border-radius:999px;background:var(--card2);border:1px solid var(--line);color:var(--text)}
+.filters button.on,.tabs button.on{background:var(--pink);color:#111;border-color:var(--pink);font-weight:600}
+.tabs{display:flex;gap:6px;overflow-x:auto;margin:6px 0 14px;padding-bottom:2px}
+.tabs .n{display:inline-block;margin-left:4px;font-size:11px;opacity:.8}
+.av{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-weight:700;color:#111;flex:none;font-size:15px}
+.av.sm{width:34px;height:34px;font-size:12.5px}
+.av.lg{width:74px;height:74px;font-size:25px}
+label{display:block;font-size:13px;color:var(--muted);margin:12px 0 5px}
+input,select,textarea{width:100%;background:var(--card2);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font:inherit}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--pink);outline-offset:-1px}
+textarea{min-height:76px;resize:vertical}
+input[type=checkbox]{width:auto;accent-color:var(--pink)}
+.check{display:flex;gap:8px;align-items:flex-start;color:var(--text);font-size:13.5px;margin:12px 0}
+.check input{margin-top:3px}
+.pills{display:flex;flex-wrap:wrap;gap:6px}
+.pills label{margin:0;display:inline-flex;align-items:center;gap:6px;background:var(--card2);border:1px solid var(--line);border-radius:999px;padding:6px 11px;color:var(--text);font-size:13px;cursor:pointer}
+.err{color:var(--bad);font-size:13px;margin-top:8px;min-height:1px}
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;display:flex;background:#111114;border-top:1px solid var(--line);z-index:6;padding-bottom:env(safe-area-inset-bottom)}
+.nav button{flex:1;background:none;border:0;color:var(--muted);font:inherit;font-size:11px;padding:9px 0 10px;cursor:pointer;position:relative}
+.nav button .ic{display:block;font-size:19px;line-height:1.25}
+.nav button.on{color:var(--pink);font-weight:600}
+.dot{position:absolute;top:4px;left:calc(50% + 6px);background:var(--pink);color:#111;border-radius:999px;font-size:10px;font-weight:700;min-width:17px;height:17px;padding:0 4px;display:grid;place-items:center}
+.bell .dot{top:-4px;left:auto;right:-4px}
+.st{display:inline-block;font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:999px;white-space:nowrap}
+.st.pendiente,.st.recibida,.st.programada{background:#3a3120;color:var(--warn)}
+.st.aceptada,.st.tramite{background:var(--pinkdim);color:var(--pink)}
+.st.completada,.st.realizada,.st.cerrada,.st.cumple{background:rgba(123,227,166,.13);color:var(--ok)}
+.st.rechazada,.st.cancelada,.st.nocumple,.st.vencida{background:rgba(255,143,143,.12);color:var(--bad)}
+.bar{height:8px;background:var(--card2);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--pink);border-radius:99px}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.72);display:flex;align-items:flex-end;justify-content:center;z-index:20}
+.modal{background:var(--card);width:100%;max-width:480px;max-height:92vh;overflow:auto;border-radius:20px 20px 0 0;padding:18px 18px 24px;border:1px solid var(--line)}
+.modal h2{margin-top:2px}
+.toast{position:fixed;bottom:98px;left:50%;transform:translateX(-50%);background:var(--pink);color:#111;padding:10px 18px;border-radius:999px;font-weight:600;z-index:40;max-width:90vw;text-align:center;box-shadow:0 6px 24px rgba(0,0,0,.5)}
+.msgs{display:flex;flex-direction:column;gap:6px;max-height:300px;overflow:auto;padding:4px 2px;margin-bottom:10px}
+.msg{max-width:80%;padding:8px 12px;border-radius:14px;background:var(--card2);font-size:14px}
+.msg small{display:block;font-size:10.5px;opacity:.65;margin-top:2px}
+.msg.me{align-self:flex-end;background:var(--pink);color:#111}
+.stars{color:var(--pink);letter-spacing:1px}
+.rate{display:flex;gap:4px}
+.rate button{background:var(--card2);border:1px solid var(--line);color:#555;border-radius:8px;width:40px;height:36px;font-size:18px;cursor:pointer}
+.rate button.on{color:var(--pink);border-color:var(--pink)}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th,td{text-align:left;padding:7px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:600}
+.tbl{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:4px 6px;margin-bottom:12px}
+.welcome{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:30px 26px}
+.big{font-family:Anton,Impact,sans-serif;font-size:72px;line-height:.92}
+.big span{color:var(--pink);display:block}
+.notice{background:var(--pinkdim);border-radius:12px;padding:10px 12px;color:var(--pink2);font-size:13.5px;margin-bottom:12px}
+.notice.warn{background:rgba(255,210,122,.1);color:var(--warn)}
+.empty{text-align:center;color:var(--muted);padding:22px 8px}
+.skill{border-left:3px solid var(--pink);padding:2px 0 2px 10px;margin:10px 0}
+.kpi{display:flex;gap:12px;align-items:center}
+.kpi .v{font-family:Anton,Impact,sans-serif;font-size:28px;min-width:84px;color:var(--pink)}
+.link{color:var(--pink);cursor:pointer;text-decoration:underline;background:none;border:0;font:inherit;padding:0}
+a{color:var(--pink)}
+.sep{height:1px;background:var(--line);margin:12px 0}
+.badge{font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:999px;background:var(--pink);color:#111;margin-left:6px;vertical-align:middle}
+.badge.l{background:#c9b6ff}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="modal"></div>
+<div id="toast"></div>
+<datalist id="sug"></datalist>
+<script>
+/* ============ CONFIGURACIÓN ============ */
+const KEY = 'skillswap_demo_v1';
+const CATS = ['Idiomas','Ofimática y programación','Diseño y fotografía','Música y arte','Deportes y bienestar','Otras'];
+const SUGERENCIAS = {
+  'Inglés':'Idiomas','Francés':'Idiomas','Portugués':'Idiomas','Alemán':'Idiomas','Lengua de señas':'Idiomas',
+  'Excel':'Ofimática y programación','Word':'Ofimática y programación','Python':'Ofimática y programación','JavaScript':'Ofimática y programación','Power BI':'Ofimática y programación',
+  'Diseño gráfico':'Diseño y fotografía','Fotografía':'Diseño y fotografía','Edición de video':'Diseño y fotografía','Canva':'Diseño y fotografía',
+  'Guitarra':'Música y arte','Piano':'Música y arte','Dibujo':'Música y arte','Canto':'Música y arte',
+  'Yoga':'Deportes y bienestar','Entrenamiento funcional':'Deportes y bienestar',
+  'Cocina':'Otras','Redacción':'Otras','Contabilidad básica':'Otras','Matemáticas':'Otras','Oratoria':'Otras'
+};
+const DIAS = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+const FRANJAS = ['Mañana','Tarde','Noche'];
+const NIVELES = ['Básico','Intermedio','Avanzado'];
+const MODALIDADES = ['Virtual','Presencial','Ambas'];
+const PLANES = {
+  gratis:  {nombre:'Gratis', precio:0, limite:2, sinOfrecer:false, desc:['Perfil y ficha de habilidades','Hasta 2 solicitudes activas','Intercambio: enseñas para aprender']},
+  master:  {nombre:'Skill Master', precio:15900, limite:Infinity, sinOfrecer:false, desc:['Solicitudes ilimitadas','Prioridad en las coincidencias','Insignia Skill Master en tu perfil','Aprende y enseña con otros usuarios']},
+  learner: {nombre:'Skill Learner', precio:30900, limite:Infinity, sinOfrecer:true, desc:['Aprende sin tener que ofrecer algo a cambio','Solicitudes ilimitadas','Ideal si aún no quieres enseñar']}
+};
+const PQRS_CAT = {A:{nombre:'Registro y perfiles',horas:24},B:{nombre:'Agenda y coincidencias',horas:48},C:{nombre:'Quejas e incumplimientos',horas:72}};
+const PQRS_TIPOS = ['Petición','Queja','Reclamo','Sugerencia'];
+const KPI_META = {IPC:90,TEC:70,CEP:85,NSU:80,TPR:24};
+
+/* ============ UTILIDADES ============ */
+const pad = n => String(n).padStart(2,'0');
+function dIso(off=0){const d=new Date();d.setDate(d.getDate()+off);return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+const tsAgo = h => new Date(Date.now()-h*3600e3).toISOString();
+const nowIso = () => new Date().toISOString();
+const uid = p => p + Math.random().toString(36).slice(2,9);
+const esc = s => String(s ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const norm = s => String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().trim();
+const money = n => '$' + n.toLocaleString('es-CO');
+const avg = a => a.length ? a.reduce((x,y)=>x+y,0)/a.length : null;
+function fFecha(f){const [y,m,d]=f.split('-').map(Number);return new Date(y,m-1,d).toLocaleDateString('es-CO',{weekday:'short',day:'numeric',month:'short'});}
+const fTs = ts => new Date(ts).toLocaleString('es-CO',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+function hace(ts){const m=Math.round((Date.now()-new Date(ts))/60000);if(m<1)return 'ahora';if(m<60)return 'hace '+m+' min';const h=Math.round(m/60);if(h<24)return 'hace '+h+' h';return 'hace '+Math.round(h/24)+' d';}
+const first = u => (u?.nombre||'').split(' ')[0];
+const COLORES = ['#f9a8e0','#ffc9a8','#c9b6ff','#a8e6f9','#b8f2c4','#ffe49a','#ffb3c1'];
+function avatar(u,cls=''){let h=0;for(const c of u.id)h=(h*31+c.charCodeAt(0))>>>0;const ini=u.nombre.split(' ').map(p=>p[0]).slice(0,2).join('');return `<div class="av ${cls}" style="background:${COLORES[h%COLORES.length]}">${esc(ini)}</div>`;}
+function estrellas(v){if(v==null)return '<span class="muted small">Sin calificaciones</span>';const r=Math.round(v);return `<span class="stars">${'★'.repeat(r)}${'☆'.repeat(5-r)}</span> <b>${v.toFixed(1)}</b>`;}
+
+/* ============ DATOS DE DEMOSTRACIÓN ============ */
+const sk = (nombre,categoria,nivel,modalidad,descripcion,requisitos='') => ({id:uid('s'),nombre,categoria,nivel,modalidad,descripcion,requisitos});
+const ap = (nombre,categoria) => ({id:uid('a'),nombre,categoria});
+function seed(){
+  const U=(id,nombre,correo,ciudad,bio,plan,dias,franjas,ensena,aprende)=>({id,nombre,correo,pass:'1234',ciudad,bio,plan,rol:'usuario',disponibilidad:{dias,franjas},autorizaDatos:true,fechaAutorizacion:tsAgo(24*30),ensena,aprende,creado:tsAgo(24*30)});
+  const usuarios=[
+    U('u1','Laura Gómez','laura@demo.co','Bogotá','Licenciada en idiomas. Me encanta la fotografía de calle.','master',['Sáb','Dom'],['Mañana','Tarde'],
+      [sk('Inglés','Idiomas','Avanzado','Virtual','Conversación y gramática para el día a día y entrevistas.','Leer a nivel básico'),sk('Fotografía','Diseño y fotografía','Intermedio','Ambas','Composición, luz natural y edición desde el celular.','Cámara o celular')],
+      [ap('Excel','Ofimática y programación'),ap('Guitarra','Música y arte')]),
+    U('u2','Andrés Rojas','andres@demo.co','Medellín','Analista de datos. Paciente para explicar.','gratis',['Mar','Jue','Sáb'],['Noche'],
+      [sk('Excel','Ofimática y programación','Avanzado','Virtual','Fórmulas, tablas dinámicas y gráficos.','Computador con Excel o Google Sheets'),sk('Python','Ofimática y programación','Intermedio','Virtual','Primeros pasos: variables, ciclos y funciones.')],
+      [ap('Inglés','Idiomas'),ap('Edición de video','Diseño y fotografía')]),
+    U('u3','Valentina Ríos','valentina@demo.co','Cali','Toco guitarra desde los 12 años.','gratis',['Sáb','Dom'],['Tarde'],
+      [sk('Guitarra','Música y arte','Avanzado','Ambas','Acordes, ritmos y canciones populares.','Tener guitarra'),sk('Dibujo','Música y arte','Intermedio','Presencial','Boceto, sombras y perspectiva.')],
+      [ap('Fotografía','Diseño y fotografía'),ap('Inglés','Idiomas')]),
+    U('u4','Camilo Torres','camilo@demo.co','Bogotá','Creador de contenido para redes.','master',['Lun','Mié','Vie'],['Noche'],
+      [sk('Edición de video','Diseño y fotografía','Avanzado','Virtual','CapCut y DaVinci Resolve desde cero.'),sk('Canva','Diseño y fotografía','Avanzado','Virtual','Piezas para redes sociales.')],
+      [ap('Python','Ofimática y programación'),ap('Francés','Idiomas')]),
+    U('u5','Daniela Martínez','daniela@demo.co','Barranquilla','Viví dos años en Lyon.','gratis',['Mar','Jue'],['Tarde','Noche'],
+      [sk('Francés','Idiomas','Avanzado','Virtual','Francés básico y conversación.'),sk('Redacción','Otras','Intermedio','Virtual','Correos, informes y hojas de vida.')],
+      [ap('Diseño gráfico','Diseño y fotografía'),ap('Excel','Ofimática y programación')]),
+    U('u6','Santiago Herrera','santiago@demo.co','Bucaramanga','Diseñador gráfico y contador en formación.','gratis',['Sáb'],['Mañana'],
+      [sk('Diseño gráfico','Diseño y fotografía','Avanzado','Ambas','Illustrator, color y tipografía.'),sk('Contabilidad básica','Otras','Intermedio','Virtual','Ingresos, gastos y presupuesto personal.')],
+      [ap('Guitarra','Música y arte'),ap('Portugués','Idiomas')]),
+    U('u7','Mariana López','mariana@demo.co','Pereira','Quiero aprender inglés para viajar.','learner',['Dom'],['Mañana'],
+      [sk('Yoga','Deportes y bienestar','Intermedio','Presencial','Rutinas suaves para principiantes.','Tapete')],
+      [ap('Inglés','Idiomas')]),
+    U('u8','Julián Castro','julian@demo.co','Bogotá','','gratis',[],[],
+      [sk('Portugués','Idiomas','Intermedio','Virtual','Portugués de Brasil para viajeros.'),sk('Matemáticas','Otras','Avanzado','Virtual','Álgebra y cálculo para el colegio.')],
+      [ap('Edición de video','Diseño y fotografía')]),
+    {id:'admin',nombre:'Administración SkillSwap',correo:'admin@skillswap.co',pass:'admin',rol:'admin',ciudad:'',bio:'',plan:'gratis',disponibilidad:{dias:[],franjas:[]},autorizaDatos:true,ensena:[],aprende:[],creado:tsAgo(24*60)}
+  ];
+  const S=(n,de,para,solicita,ofrece,estado,h,mensaje)=>({id:'sol'+n,codigo:'SOL-'+String(n).padStart(4,'0'),de,para,solicita,ofrece,estado,mensaje,fecha:tsAgo(h),fechaRespuesta:estado==='pendiente'?null:tsAgo(h-5)});
+  const solicitudes=[
+    S(1,'u2','u1','Inglés','Excel','completada',24*20,'¡Hola Laura! Necesito inglés para entrevistas de trabajo.'),
+    S(2,'u3','u1','Fotografía','Guitarra','aceptada',24*4,'Me encantaría aprender fotografía, y te enseño guitarra.'),
+    S(3,'u4','u2','Python','Edición de video','completada',24*15,'Quiero automatizar tareas con Python.'),
+    S(4,'u5','u6','Diseño gráfico','Francés','rechazada',24*10,'¿Te interesa aprender francés?'),
+    S(5,'u6','u3','Guitarra','Diseño gráfico','completada',24*12,'Siempre quise tocar guitarra.'),
+    S(6,'u7','u1','Inglés','','pendiente',6,'Hola Laura, tengo plan Skill Learner y quiero aprender inglés para un viaje.'),
+    S(7,'u1','u2','Excel','Inglés','pendiente',20,'¡Hola Andrés! Vi que quieres inglés, ¿cambiamos por Excel?'),
+    S(8,'u8','u4','Edición de video','Matemáticas','aceptada',24*3,'Te ayudo con matemáticas si me enseñas a editar.')
+  ];
+  solicitudes[3].motivoRechazo='En este momento no tengo disponibilidad.';
+  const SE=(n,sol,off,hora,modalidad,lugar,estado,extra={})=>({id:'ses'+n,solicitud:sol,fecha:dIso(off),hora,duracion:60,modalidad,lugar,estado,historial:[],...extra});
+  const sesiones=[
+    SE(1,'sol1',-18,'10:00','Virtual','https://meet.jit.si/SkillSwap-demo-1','realizada'),
+    SE(2,'sol1',-11,'10:00','Virtual','https://meet.jit.si/SkillSwap-demo-1','realizada'),
+    SE(3,'sol3',-13,'19:00','Virtual','https://meet.jit.si/SkillSwap-demo-3','realizada'),
+    SE(4,'sol5',-10,'09:00','Presencial','Biblioteca Pública de Bucaramanga','cancelada',{motivo:'Calamidad doméstica'}),
+    SE(5,'sol5',-8,'09:00','Virtual','https://meet.jit.si/SkillSwap-demo-5','realizada'),
+    SE(6,'sol2',2,'15:00','Presencial','Parque de la 93, Bogotá','programada'),
+    SE(7,'sol3',-6,'19:00','Virtual','https://meet.jit.si/SkillSwap-demo-3','realizada')
+  ];
+  const E=(ses,de,para,p,c,r,x,comentario)=>({id:uid('e'),sesion:ses,de,para,puntualidad:p,claridad:c,respeto:r,experiencia:x,comentario,novedades:'',fecha:tsAgo(24*7)});
+  const evaluaciones=[
+    E('ses1','u2','u1',5,5,5,5,'Laura explica muy claro, me sirvió para mi entrevista.'),
+    E('ses1','u1','u2',4,5,5,4,'Muy buen manejo de Excel, llegó 5 minutos tarde.'),
+    E('ses3','u4','u2',5,4,5,4,'Buen ritmo, quedé con ganas de más.'),
+    E('ses5','u6','u3',5,5,5,5,'¡Ya toco mis primeros acordes!'),
+    E('ses5','u3','u6',4,4,5,4,'Buenos consejos de diseño.'),
+    E('ses7','u2','u4',3,4,5,4,'Bien, pero la conexión falló un rato.')
+  ];
+  const M=(sol,de,texto,h)=>({id:uid('m'),solicitud:sol,de,texto,fecha:tsAgo(h)});
+  const mensajes=[
+    M('sol2','u3','¡Hola Laura! ¿Te queda bien vernos el sábado?',24*3),
+    M('sol2','u1','¡Claro! Agendé la sesión en el Parque de la 93. Lleva tu guitarra 🎸',24*3-1),
+    M('sol2','u3','Perfecto, ahí nos vemos.',24*3-2),
+    M('sol8','u4','Hola Julián, ¿qué días puedes en la noche?',24*2)
+  ];
+  const P=(n,usuario,tipo,cat,asunto,descripcion,estado,h,respuesta=null,hResp=null)=>({id:'pq'+n,codigo:'PQRS-2026-'+String(n).padStart(4,'0'),usuario,tipo,categoria:cat,asunto,descripcion,estado,fecha:tsAgo(h),respuesta,fechaRespuesta:hResp!=null?tsAgo(hResp):null});
+  const pqrs=[
+    P(1,'u5','Queja','C','Incumplimiento de sesión','La otra persona no se conectó a la sesión acordada.','Cerrada',24*9,'Contactamos al usuario y se reprogramó la sesión. Se dejó registro del incumplimiento.',24*9-20),
+    P(2,'u2','Petición','A','Cambio de correo','Necesito actualizar el correo de mi cuenta.','Cerrada',24*5,'Tu correo fue actualizado correctamente.',24*5-6),
+    P(3,'u3','Sugerencia','B','Recordatorios de sesión','Sería útil recibir un recordatorio un día antes de cada sesión.','Recibida',10)
+  ];
+  const N=(para,texto,h,link=null,leida=false)=>({id:uid('n'),para,texto,fecha:tsAgo(h),link,leida});
+  const notifs=[
+    N('u1','Mariana López te envió una solicitud: quiere aprender Inglés.',6,{v:'intercambio',id:'sol6'}),
+    N('u1','Valentina Ríos te escribió en el intercambio SOL-0002.',24*3-2,{v:'intercambio',id:'sol2'},true),
+    N('u2','Laura Gómez te envió una solicitud: quiere aprender Excel.',20,{v:'intercambio',id:'sol7'}),
+    N('admin','Nueva PQRS PQRS-2026-0003 (Sugerencia, categoría B).',10,null)
+  ];
+  return {version:1,usuarios,solicitudes,sesiones,evaluaciones,mensajes,pqrs,notifs,cont:{sol:8,pqrs:3},actual:null};
+}
+
+/* ============ ALMACENAMIENTO ============ */
+let db;
+function load(){try{const r=localStorage.getItem(KEY);if(r){db=JSON.parse(r);return;}}catch(e){}db=seed();}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(db));}catch(e){}}
+
+/* ============ CONSULTAS ============ */
+const me = () => db.usuarios.find(u=>u.id===db.actual);
+const user = id => db.usuarios.find(u=>u.id===id);
+const sol = id => db.solicitudes.find(s=>s.id===id);
+const ses = id => db.sesiones.find(s=>s.id===id);
+const personas = () => db.usuarios.filter(u=>u.rol!=='admin');
+const otroDe = (s,uidv) => user(s.de===uidv?s.para:s.de);
+function roles(s,uidv){return s.de===uidv?{aprendo:s.solicita,enseno:s.ofrece}:{aprendo:s.ofrece,enseno:s.solicita};}
+const promEval = e => (e.puntualidad+e.claridad+e.respeto+e.experiencia)/4;
+function rating(uidv){const ev=db.evaluaciones.filter(e=>e.para===uidv);return {prom:avg(ev.map(promEval)),n:ev.length};}
+function perfil(u){
+  const checks=[['Nombre',!!u.nombre],['Correo',!!u.correo],['Ciudad',!!u.ciudad],['Descripción sobre ti',!!u.bio],
+    ['Días disponibles',u.disponibilidad.dias.length>0],['Franja horaria',u.disponibilidad.franjas.length>0],
+    ['Autorización de datos',!!u.autorizaDatos],['Algo que quieras aprender',u.aprende.length>0]];
+  if(u.plan!=='learner') checks.push(['Una habilidad que puedas enseñar',u.ensena.length>0]);
+  const ok=checks.filter(c=>c[1]).length;
+  return {pct:Math.round(ok/checks.length*100),faltan:checks.filter(c=>!c[1]).map(c=>c[0])};
+}
+function coincide(nombreQuiero,nombreSkill){const a=norm(nombreQuiero),b=norm(nombreSkill);return a&&b&&(a===b||a.includes(b)||b.includes(a));}
+function match(a,b){
+  const meEnsena=b.ensena.filter(s=>a.aprende.some(w=>coincide(w.nombre,s.nombre)));
+  const leEnseno=a.ensena.filter(s=>b.aprende.some(w=>coincide(w.nombre,s.nombre)));
+  const mutuo=meEnsena.length>0&&leEnseno.length>0;
+  const catA=new Set(a.aprende.map(x=>x.categoria));
+  const afin=b.ensena.filter(s=>catA.has(s.categoria)).length;
+  return {meEnsena,leEnseno,mutuo,score:(mutuo?10:0)+meEnsena.length*4+leEnseno.length*2+afin};
+}
+const activas = uidv => db.solicitudes.filter(s=>s.de===uidv&&['pendiente','aceptada'].includes(s.estado)).length;
+const sesionesDe = solId => db.sesiones.filter(s=>s.solicitud===solId).sort((a,b)=>(a.fecha+a.hora).localeCompare(b.fecha+b.hora));
+function misSesiones(){const m=me();return db.sesiones.filter(x=>{const s=sol(x.solicitud);return s&&(s.de===m.id||s.para===m.id);});}
+const yaEvalue = (sesId,uidv) => db.evaluaciones.find(e=>e.sesion===sesId&&e.de===uidv);
+const noLeidas = () => db.notifs.filter(n=>n.para===db.actual&&!n.leida).length;
+const pendRecibidas = () => db.solicitudes.filter(s=>s.para===db.actual&&s.estado==='pendiente').length;
+function notify(para,texto,link=null){db.notifs.push({id:uid('n'),para,texto,fecha:nowIso(),link,leida:false});}
+const vencida = x => x.estado==='programada' && (x.fecha+' '+x.hora) < (dIso(0)+' '+new Date().toTimeString().slice(0,5));
+
+/* ============ INTERFAZ BÁSICA ============ */
+const ui = {view:'inicio',p:{},auth:'welcome',tab:{inter:'recibidas',agenda:'proximas',admin:'kpi'},f:{q:'',cat:'',mutuo:false}};
+const $ = s => document.querySelector(s);
+function go(v,p={}){if(v==='explorar'&&p.q!==undefined){ui.f.q=p.q;ui.f.cat='';ui.f.mutuo=false;}ui.view=v;ui.p=p;closeModal();render();window.scrollTo(0,0);}
+function toast(t){const el=$('#toast');el.innerHTML=`<div class="toast">${esc(t)}</div>`;clearTimeout(toast._t);toast._t=setTimeout(()=>el.innerHTML='',2600);}
+function openModal(html){$('#modal').innerHTML=`<div class="modal-bg" onclick="if(event.target===this)closeModal()"><div class="modal">${html}</div></div>`;}
+function closeModal(){$('#modal').innerHTML='';}
+let _confirmCb=null;
+function confirmar(titulo,texto,btn,cb,peligro=false){_confirmCb=cb;openModal(`<h2>${esc(titulo)}</h2><p class="muted">${texto}</p><div class="btns"><button class="btn ${peligro?'danger':''}" onclick="const c=_confirmCb;closeModal();c()">${esc(btn)}</button><button class="btn sec" onclick="closeModal()">Volver</button></div>`);}
+function commit(msg){save();render();if(msg)toast(msg);}
+
+function render(){
+  const m=me(), app=$('#app');
+  if(!m){app.innerHTML=vAuth();return;}
+  if(m.rol==='admin'){app.innerHTML=header()+'<main>'+vAdmin()+'</main>';return;}
+  const V={inicio:vInicio,explorar:vExplorar,usuario:vUsuario,intercambios:vIntercambios,intercambio:vIntercambio,agenda:vAgenda,perfil:vPerfil,editar:vEditar,planes:vPlanes,pqrs:vPqrs,notifs:vNotifs};
+  app.innerHTML=header()+'<main>'+(V[ui.view]||vInicio)()+'</main>'+nav();
+  const ms=document.querySelector('.msgs');if(ms)ms.scrollTop=ms.scrollHeight;
+}
+function header(){
+  const m=me(),n=noLeidas();
+  const right=m.rol==='admin'?`<button class="btn sec sm" onclick="cambiarUsuario()">Cambiar usuario</button>`:`<button class="bell" onclick="go('notifs')" aria-label="Notificaciones">🔔${n?`<span class="dot">${n}</span>`:''}</button>`;
+  return `<div class="top"><div class="logo" onclick="go('inicio')">Skill<b>Swap</b></div>${right}</div>`;
+}
+function nav(){
+  const it=[['inicio','🏠','Inicio'],['explorar','🔍','Explorar'],['intercambios','🔁','Intercambios'],['agenda','📅','Agenda'],['perfil','👤','Perfil']];
+  const map={usuario:'explorar',intercambio:'intercambios',editar:'perfil',planes:'perfil',pqrs:'perfil',notifs:'inicio'};
+  const cur=map[ui.view]||ui.view,pr=pendRecibidas();
+  return `<nav class="nav">${it.map(([v,ic,t])=>`<button class="${cur===v?'on':''}" onclick="go('${v}')"><span class="ic">${ic}</span>${t}${v==='intercambios'&&pr?`<span class="dot">${pr}</span>`:''}</button>`).join('')}</nav>`;
+}
+
+/* ============ ACCESO: BIENVENIDA, LOGIN, REGISTRO (FR-01) ============ */
+function vAuth(){
+  if(ui.auth==='login') return `<div class="welcome">
+    <button class="link" onclick="ui.auth='welcome';render()">← Volver</button>
+    <h1 class="top14">Iniciar sesión</h1>
+    <form onsubmit="return login(event)">
+      <label>Correo</label><input name="correo" type="email" required autocomplete="username">
+      <label>Contraseña</label><input name="pass" type="password" required autocomplete="current-password">
+      <div class="err" id="err"></div>
+      <button class="btn block top14">Entrar</button>
+    </form>
+    <div class="notice top14">Cuentas de prueba: <b>laura@demo.co</b>, <b>andres@demo.co</b>, <b>valentina@demo.co</b>… con contraseña <b>1234</b>. Administración: <b>admin@skillswap.co</b> / <b>admin</b>.</div>
+  </div>`;
+  if(ui.auth==='registro') return `<div class="welcome" style="justify-content:flex-start">
+    <button class="link" onclick="ui.auth='welcome';render()">← Volver</button>
+    <h1 class="top14">Crear cuenta</h1>
+    <p class="muted small">Formato FR-01 · Registro de usuarios</p>
+    <form onsubmit="return registrar(event)">
+      <label>Nombre completo</label><input name="nombre" required>
+      <label>Correo</label><input name="correo" type="email" required>
+      <label>Contraseña (mínimo 4 caracteres)</label><input name="pass" type="password" required minlength="4">
+      <label>Ciudad</label><input name="ciudad" required>
+      <label>¿Qué días tienes disponibles?</label><div class="pills">${DIAS.map(d=>`<label><input type="checkbox" name="dias" value="${d}">${d}</label>`).join('')}</div>
+      <label>¿En qué franja?</label><div class="pills">${FRANJAS.map(d=>`<label><input type="checkbox" name="franjas" value="${d}">${d}</label>`).join('')}</div>
+      <label class="check"><input type="checkbox" name="autoriza"> <span>Autorizo el tratamiento de mis datos personales para crear mi perfil y gestionar mis intercambios en SkillSwap, de acuerdo con la Ley 1581 de 2012 (protección de datos personales).</span></label>
+      <div class="err" id="err"></div>
+      <button class="btn block top8">Registrarme</button>
+    </form>
+  </div>`;
+  const demo=personas().slice(0,4);
+  return `<div class="welcome">
+    <div class="big">SKILL<span>SWAP</span></div>
+    <p class="muted" style="font-size:17px;margin:14px 0 30px">Tu talento es tu moneda. Enseña lo que sabes y aprende lo que quieres.</p>
+    <button class="btn block" onclick="ui.auth='login';render()">Iniciar sesión</button>
+    <button class="btn sec block top8" onclick="ui.auth='registro';render()">Registrarse</button>
+    <div class="sep" style="margin:28px 0 14px"></div>
+    <p class="muted small">Entrada rápida para la demostración:</p>
+    <div class="btns">${demo.map(u=>`<button class="btn ghost sm" onclick="entrarComo('${u.id}')">${esc(first(u))}</button>`).join('')}<button class="btn ghost sm" onclick="entrarComo('admin')">Administración</button></div>
+  </div>`;
+}
+function login(e){e.preventDefault();const f=e.target;const u=db.usuarios.find(x=>norm(x.correo)===norm(f.correo.value)&&x.pass===f.pass.value);
+  if(!u){$('#err').textContent='Correo o contraseña incorrectos.';return false;}entrarComo(u.id);return false;}
+function entrarComo(id){db.actual=id;ui.view=user(id).rol==='admin'?'admin':'inicio';ui.p={};save();closeModal();render();toast('Hola, '+first(user(id)));}
+function registrar(e){
+  e.preventDefault();const f=e.target,err=$('#err');
+  const correo=f.correo.value.trim();
+  if(db.usuarios.some(u=>norm(u.correo)===norm(correo))){err.textContent='Ya existe una cuenta con ese correo.';return false;}
+  if(!f.autoriza.checked){err.textContent='Debes autorizar el tratamiento de datos para continuar.';return false;}
+  const dias=[...f.querySelectorAll('[name=dias]:checked')].map(x=>x.value),franjas=[...f.querySelectorAll('[name=franjas]:checked')].map(x=>x.value);
+  const u={id:uid('u'),nombre:f.nombre.value.trim(),correo,pass:f.pass.value,ciudad:f.ciudad.value.trim(),bio:'',plan:'gratis',rol:'usuario',disponibilidad:{dias,franjas},autorizaDatos:true,fechaAutorizacion:nowIso(),ensena:[],aprende:[],creado:nowIso()};
+  db.usuarios.push(u);db.actual=u.id;notify(u.id,'¡Bienvenido a SkillSwap! Completa tu ficha de habilidades para encontrar coincidencias.',{v:'perfil'});
+  save();ui.view='perfil';render();
+  openModal(`<h2>¡Bienvenido, ${esc(first(u))}!</h2><p>Tu cuenta quedó creada. El siguiente paso es tu <b>ficha de habilidades</b>: cuéntanos qué sabes enseñar y qué quieres aprender. Con eso te mostramos tus coincidencias.</p><div class="btns"><button class="btn" onclick="openHabilidad('ensena')">Agregar lo que sé enseñar</button></div>`);
+  return false;
+}
+function logout(){db.actual=null;ui.auth='welcome';save();render();}
+function cambiarUsuario(){
+  openModal(`<h2>Cambiar de usuario</h2><p class="muted small">Para la demostración: entra como otra persona y responde solicitudes, mensajes o PQRS desde el otro lado.</p>
+  ${db.usuarios.map(u=>`<div class="card click row" onclick="entrarComo('${u.id}')">${avatar(u,'sm')}<div class="grow"><b>${esc(u.nombre)}</b><div class="muted xs">${esc(u.correo)}${u.rol==='admin'?' · administración':''}</div></div>${u.id===db.actual?'<span class="chip p">actual</span>':''}</div>`).join('')}
+  <button class="btn sec block" onclick="closeModal()">Cerrar</button>`);
+}
+
+/* ============ INICIO ============ */
+function vInicio(){
+  const m=me(),p=perfil(m),r=rating(m.id);
+  const act=db.solicitudes.filter(s=>(s.de===m.id||s.para===m.id)&&s.estado==='aceptada').length;
+  const prox=misSesiones().filter(x=>x.estado==='programada'&&!vencida(x)).sort((a,b)=>(a.fecha+a.hora).localeCompare(b.fecha+b.hora));
+  const pr=pendRecibidas();
+  const top=personas().filter(u=>u.id!==m.id).map(u=>({u,mt:match(m,u)})).filter(x=>x.mt.meEnsena.length).sort((a,b)=>b.mt.score-a.mt.score).slice(0,3);
+  const notis=db.notifs.filter(n=>n.para===m.id).sort((a,b)=>b.fecha.localeCompare(a.fecha)).slice(0,3);
+  return `<h1>Hola, ${esc(first(m))}</h1>
+  ${p.pct<100?`<div class="notice">Tu perfil está al ${p.pct}%. Falta: ${p.faltan.join(', ')}. <button class="link" onclick="go('perfil')">Completarlo</button></div>`:''}
+  <div class="grid3">
+    <div class="stat"><b>${r.prom!=null?r.prom.toFixed(1)+'★':'—'}</b><span>${r.n} reseñas</span></div>
+    <div class="stat"><b>${act}</b><span>intercambios activos</span></div>
+    <div class="stat"><b>${prox.length}</b><span>sesiones próximas</span></div>
+  </div>
+  ${pr?`<div class="card click row" onclick="ui.tab.inter='recibidas';go('intercambios')"><div class="grow"><b>Tienes ${pr} solicitud${pr>1?'es':''} por responder</b><div class="muted small">Acepta o rechaza para que la otra persona sepa.</div></div><span class="btn sm">Ver</span></div>`:''}
+  ${prox.length?`<h2>Tu próxima sesión</h2>${tarjetaSesion(prox[0],true)}`:''}
+  <h2>Personas que te pueden enseñar</h2>
+  ${top.length?top.map(x=>tarjetaUsuario(x.u,x.mt)).join('')+`<button class="btn sec block" onclick="go('explorar')">Explorar a todos</button>`
+    :`<div class="card empty">Agrega en tu perfil lo que quieres aprender y aquí verás quién te lo puede enseñar.<div class="btns" style="justify-content:center"><button class="btn sm" onclick="openHabilidad('aprende')">Agregar</button></div></div>`}
+  <h2>Novedades</h2>
+  ${notis.length?notis.map(itemNotif).join('')+`<button class="link small" onclick="go('notifs')">Ver todas</button>`:'<p class="muted">Sin novedades.</p>'}`;
+}
+
+/* ============ EXPLORAR Y COINCIDENCIAS ============ */
+function tarjetaUsuario(u,mt){
+  const r=rating(u.id),pl=u.plan==='master'?'<span class="badge">MASTER</span>':u.plan==='learner'?'<span class="badge l">LEARNER</span>':'';
+  let tag='';
+  if(mt.mutuo) tag='<span class="chip ok">✓ Match mutuo</span>';
+  else if(mt.meEnsena.length) tag='<span class="chip p">Te puede enseñar</span>';
+  else if(mt.leEnseno.length) tag='<span class="chip">Quiere lo que sabes</span>';
+  const ens=u.ensena.map(s=>`<span class="chip ${mt.meEnsena.includes(s)?'p':''}">${esc(s.nombre)}</span>`).join('')||'<span class="muted small">—</span>';
+  return `<div class="card click" onclick="go('usuario',{id:'${u.id}'})">
+    <div class="row">${avatar(u)}<div class="grow"><b>${esc(u.nombre)}</b>${pl}<div class="muted small">${esc(u.ciudad||'Sin ciudad')} · ${r.prom!=null?'★ '+r.prom.toFixed(1)+' ('+r.n+')':'Nuevo'}</div></div>${tag}</div>
+    <div class="top8 small"><span class="muted">Enseña:</span> ${ens}</div>
+    <div class="small"><span class="muted">Quiere aprender:</span> ${u.aprende.map(a=>esc(a.nombre)).join(', ')||'—'}</div>
+  </div>`;
+}
+function vExplorar(){
+  return `<h1>Explorar</h1>
+  <input id="q" placeholder="Buscar habilidad, persona o ciudad" value="${esc(ui.f.q)}" oninput="ui.f.q=this.value;pintarResultados()">
+  <div class="filters"><button class="${ui.f.cat===''?'on':''}" onclick="ui.f.cat='';render()">Todas</button>${CATS.map(c=>`<button class="${ui.f.cat===c?'on':''}" onclick="ui.f.cat='${c}';render()">${c}</button>`).join('')}</div>
+  <label class="check" style="margin-top:0"><input type="checkbox" ${ui.f.mutuo?'checked':''} onchange="ui.f.mutuo=this.checked;pintarResultados()"> Solo matches mutuos (yo le enseño y él/ella me enseña)</label>
+  <div id="res">${resultados()}</div>`;
+}
+function pintarResultados(){const el=$('#res');if(el)el.innerHTML=resultados();}
+function resultados(){
+  const m=me(),q=norm(ui.f.q);
+  let l=personas().filter(u=>u.id!==m.id).map(u=>({u,mt:match(m,u),r:rating(u.id)}));
+  if(q) l=l.filter(({u})=>[u.nombre,u.ciudad,...u.ensena.map(s=>s.nombre+' '+s.categoria)].some(t=>norm(t).includes(q)));
+  if(ui.f.cat) l=l.filter(({u})=>u.ensena.some(s=>s.categoria===ui.f.cat));
+  if(ui.f.mutuo) l=l.filter(x=>x.mt.mutuo);
+  l.sort((a,b)=>b.mt.score-a.mt.score||(b.u.plan==='master')-(a.u.plan==='master')||(b.r.prom||0)-(a.r.prom||0));
+  if(!l.length) return `<div class="card empty">No encontramos personas con esos filtros.${ui.f.mutuo?' Prueba quitando “solo matches mutuos”.':''}</div>`;
+  return `<p class="muted small">${l.length} persona${l.length>1?'s':''} · primero las más compatibles contigo</p>`+l.map(x=>tarjetaUsuario(x.u,x.mt)).join('');
+}
+function vUsuario(){
+  const u=user(ui.p.id),m=me();if(!u)return '<p>No encontrado.</p>';
+  const mt=match(m,u),r=rating(u.id);
+  const resenas=db.evaluaciones.filter(e=>e.para===u.id).sort((a,b)=>b.fecha.localeCompare(a.fecha));
+  return `<button class="link" onclick="history.length;go('explorar')">← Explorar</button>
+  <div class="row top14">${avatar(u,'lg')}<div class="grow"><h1 style="margin:0">${esc(u.nombre)}</h1><div class="muted">${esc(u.ciudad)} · ${PLANES[u.plan].nombre}</div><div>${estrellas(r.prom)} <span class="muted small">(${r.n})</span></div></div></div>
+  ${u.bio?`<p class="top14">${esc(u.bio)}</p>`:''}
+  ${mt.mutuo?`<div class="notice">✓ <b>Match mutuo:</b> te puede enseñar ${mt.meEnsena.map(s=>esc(s.nombre)).join(', ')} y quiere aprender ${mt.leEnseno.map(s=>esc(s.nombre)).join(', ')}, que tú enseñas.</div>`:mt.meEnsena.length?`<div class="notice">Te puede enseñar ${mt.meEnsena.map(s=>esc(s.nombre)).join(', ')}.</div>`:''}
+  <button class="btn block" onclick="openSolicitud('${u.id}')">Proponer intercambio</button>
+  <h2>Enseña</h2>
+  ${u.ensena.length?u.ensena.map(fichaSkill).join(''):'<p class="muted">No ha registrado habilidades.</p>'}
+  <h2>Quiere aprender</h2>
+  <div>${u.aprende.map(a=>`<span class="chip ${m.ensena.some(s=>coincide(a.nombre,s.nombre))?'p':''}">${esc(a.nombre)}</span>`).join('')||'<span class="muted">—</span>'}</div>
+  <h2>Disponibilidad</h2>
+  <p>${dispoTxt(u)}</p>
+  <h2>Reseñas</h2>
+  ${resenas.length?resenas.map(e=>`<div class="card"><div class="row between"><b>${esc(user(e.de)?.nombre||'')}</b>${estrellas(promEval(e))}</div><p class="small">${esc(e.comentario)}</p><div class="muted xs">Puntualidad ${e.puntualidad} · Claridad ${e.claridad} · Respeto ${e.respeto} · Experiencia ${e.experiencia}</div></div>`).join(''):'<p class="muted">Aún no tiene reseñas.</p>'}`;
+}
+function fichaSkill(s,borrable){
+  return `<div class="skill"><div class="row between"><b>${esc(s.nombre)}</b>${borrable?`<button class="link xs" onclick="quitarHabilidad('ensena','${s.id}')">Quitar</button>`:''}</div>
+  <div class="small muted">${esc(s.categoria)} · ${esc(s.nivel)} · ${esc(s.modalidad)}</div>
+  ${s.descripcion?`<div class="small">${esc(s.descripcion)}</div>`:''}${s.requisitos?`<div class="xs muted">Requisitos: ${esc(s.requisitos)}</div>`:''}</div>`;
+}
+const dispoTxt = u => (u.disponibilidad.dias.length?u.disponibilidad.dias.join(', '):'Días sin definir')+' · '+(u.disponibilidad.franjas.length?u.disponibilidad.franjas.join(', '):'franja sin definir');
+
+/* ============ SOLICITUD DE INTERCAMBIO (FR-03) ============ */
+function openSolicitud(id){
+  const u=user(id),m=me(),pl=PLANES[m.plan];
+  if(!u.ensena.length){openModal(`<h2>Aún no enseña nada</h2><p>${esc(first(u))} no ha registrado habilidades para enseñar.</p><button class="btn sec block" onclick="closeModal()">Entendido</button>`);return;}
+  if(!m.ensena.length&&!pl.sinOfrecer){openModal(`<h2>Primero, ¿qué sabes enseñar?</h2><p>En SkillSwap tu talento es tu moneda: para pedir un intercambio necesitas ofrecer al menos una habilidad. También puedes usar el plan <b>Skill Learner</b> para aprender sin ofrecer nada a cambio.</p><div class="btns"><button class="btn" onclick="openHabilidad('ensena')">Agregar habilidad</button><button class="btn sec" onclick="go('planes')">Ver planes</button></div>`);return;}
+  if(activas(m.id)>=pl.limite){openModal(`<h2>Llegaste al límite de tu plan</h2><p>Con el plan ${pl.nombre} puedes tener hasta ${pl.limite} solicitudes activas (pendientes o en curso). Termina o cancela alguna, o cámbiate a un plan con solicitudes ilimitadas.</p><div class="btns"><button class="btn" onclick="go('planes')">Ver planes</button><button class="btn sec" onclick="closeModal()">Cerrar</button></div>`);return;}
+  const mt=match(m,u);
+  openModal(`<h2>Proponer intercambio</h2><p class="muted small">Formato FR-03 · Solicitud de intercambio con ${esc(u.nombre)}</p>
+  <form onsubmit="return crearSolicitud(event,'${u.id}')">
+    <label>¿Qué quieres aprender de ${esc(first(u))}?</label>
+    <select name="solicita" required>${u.ensena.map(s=>`<option value="${esc(s.nombre)}" ${mt.meEnsena[0]===s?'selected':''}>${esc(s.nombre)}${mt.meEnsena.includes(s)?' ★ (lo quieres aprender)':''}</option>`).join('')}</select>
+    <label>¿Qué le enseñas a cambio?</label>
+    <select name="ofrece">${m.ensena.map(s=>`<option value="${esc(s.nombre)}" ${mt.leEnseno[0]===s?'selected':''}>${esc(s.nombre)}${mt.leEnseno.includes(s)?' ★ (le interesa)':''}</option>`).join('')}${pl.sinOfrecer?`<option value="" ${m.ensena.length?'':'selected'}>Nada a cambio (plan Skill Learner)</option>`:''}</select>
+    <label>Mensaje para ${esc(first(u))}</label>
+    <textarea name="mensaje" placeholder="Preséntate y cuéntale qué te gustaría aprender">Hola ${esc(first(u))}, me gustaría hacer un intercambio contigo.</textarea>
+    <div class="err" id="err"></div>
+    <div class="btns"><button class="btn">Enviar solicitud</button><button type="button" class="btn sec" onclick="closeModal()">Cancelar</button></div>
+  </form>`);
+}
+function crearSolicitud(e,para){
+  e.preventDefault();const f=e.target,m=me(),solicita=f.solicita.value,ofrece=f.ofrece.value;
+  if(db.solicitudes.some(s=>s.de===m.id&&s.para===para&&s.solicita===solicita&&['pendiente','aceptada'].includes(s.estado))){$('#err').textContent='Ya tienes una solicitud activa con esta persona para esa habilidad.';return false;}
+  db.cont.sol++;const n=db.cont.sol;
+  const s={id:'sol'+n+uid('_'),codigo:'SOL-'+String(n).padStart(4,'0'),de:m.id,para,solicita,ofrece,estado:'pendiente',mensaje:f.mensaje.value.trim(),fecha:nowIso(),fechaRespuesta:null};
+  db.solicitudes.push(s);
+  notify(para,`${m.nombre} te envió una solicitud: quiere aprender ${solicita}${ofrece?' y te ofrece '+ofrece:''}.`,{v:'intercambio',id:s.id});
+  save();go('intercambio',{id:s.id});toast('Solicitud '+s.codigo+' enviada');return false;
+}
+function aceptar(id){const s=sol(id),m=me();s.estado='aceptada';s.fechaRespuesta=nowIso();
+  notify(s.de,`${m.nombre} aceptó tu solicitud ${s.codigo}. Ya pueden escribirse y agendar la primera sesión.`,{v:'intercambio',id});save();go('intercambio',{id});toast('¡Intercambio aceptado! Ahora agenden una sesión.');}
+function openRechazar(id){openModal(`<h2>Rechazar solicitud</h2><form onsubmit="return rechazar(event,'${id}')"><label>Motivo (opcional, se le informa a la otra persona)</label><textarea name="motivo" placeholder="Ej.: no tengo disponibilidad en este momento"></textarea><div class="btns"><button class="btn danger">Rechazar</button><button type="button" class="btn sec" onclick="closeModal()">Volver</button></div></form>`);}
+function rechazar(e,id){e.preventDefault();const s=sol(id),m=me();s.estado='rechazada';s.fechaRespuesta=nowIso();s.motivoRechazo=e.target.motivo.value.trim();
+  notify(s.de,`${m.nombre} no pudo aceptar tu solicitud ${s.codigo}. Tu búsqueda de ${s.solicita} sigue abierta: mira otras personas que lo enseñan.`,{v:'explorar',q:s.solicita});
+  closeModal();commit('Solicitud rechazada');return false;}
+function cancelarSolicitud(id){confirmar('Cancelar solicitud','La otra persona dejará de verla como pendiente.','Sí, cancelar',()=>{const s=sol(id);s.estado='cancelada';notify(s.para,`${me().nombre} canceló la solicitud ${s.codigo}.`,{v:'intercambio',id});commit('Solicitud cancelada');},true);}
+function finalizar(id){
+  const s=sol(id);
+  if(!sesionesDe(id).some(x=>x.estado==='realizada')){openModal(`<h2>Aún no hay sesiones realizadas</h2><p>Para finalizar el intercambio, marca al menos una sesión como realizada.</p><button class="btn sec block" onclick="closeModal()">Entendido</button>`);return;}
+  confirmar('Finalizar intercambio','El intercambio pasará al historial. Podrán seguir viendo sus mensajes y evaluaciones.','Finalizar',()=>{s.estado='completada';s.fechaCierre=nowIso();notify(otroDe(s,db.actual).id,`${me().nombre} finalizó el intercambio ${s.codigo}. ¡Gracias por compartir tu talento!`,{v:'intercambio',id});commit('Intercambio finalizado');});
+}
+
+/* ============ INTERCAMBIOS ============ */
+function vIntercambios(){
+  const m=me(),mias=db.solicitudes.filter(s=>s.de===m.id||s.para===m.id);
+  const grupos={
+    recibidas:['Recibidas',mias.filter(s=>s.para===m.id&&s.estado==='pendiente')],
+    enviadas:['Enviadas',mias.filter(s=>s.de===m.id&&s.estado==='pendiente')],
+    curso:['En curso',mias.filter(s=>s.estado==='aceptada')],
+    historial:['Historial',mias.filter(s=>['completada','rechazada','cancelada'].includes(s.estado))]
+  };
+  const t=ui.tab.inter,l=grupos[t][1].sort((a,b)=>b.fecha.localeCompare(a.fecha));
+  const vacio={recibidas:'Nadie te ha enviado solicitudes nuevas.',enviadas:'No tienes solicitudes esperando respuesta.',curso:'No tienes intercambios en curso.',historial:'Aún no hay intercambios terminados.'};
+  return `<h1>Intercambios</h1>
+  <div class="tabs">${Object.entries(grupos).map(([k,[n,a]])=>`<button class="${t===k?'on':''}" onclick="ui.tab.inter='${k}';render()">${n}<span class="n">${a.length}</span></button>`).join('')}</div>
+  ${l.length?l.map(tarjetaSolicitud).join(''):`<div class="card empty">${vacio[t]}${t!=='historial'?`<div class="btns" style="justify-content:center"><button class="btn sm" onclick="go('explorar')">Buscar personas</button></div>`:''}</div>`}
+  <p class="muted xs">Plan ${PLANES[m.plan].nombre}: ${activas(m.id)} de ${PLANES[m.plan].limite===Infinity?'∞':PLANES[m.plan].limite} solicitudes activas.</p>`;
+}
+const estTxt = {pendiente:'Pendiente',aceptada:'En curso',completada:'Completada',rechazada:'Rechazada',cancelada:'Cancelada'};
+function tarjetaSolicitud(s){
+  const m=me(),o=otroDe(s,m.id),r=roles(s,m.id);
+  const acciones = s.estado==='pendiente'&&s.para===m.id
+    ? `<div class="btns" onclick="event.stopPropagation()"><button class="btn sm" onclick="aceptar('${s.id}')">Aceptar</button><button class="btn sec sm" onclick="openRechazar('${s.id}')">Rechazar</button></div>` : '';
+  return `<div class="card click" onclick="go('intercambio',{id:'${s.id}'})">
+    <div class="row">${avatar(o,'sm')}<div class="grow"><b>${esc(o.nombre)}</b><div class="muted xs">${s.codigo} · ${hace(s.fecha)}</div></div><span class="st ${s.estado}">${estTxt[s.estado]}</span></div>
+    <div class="small top8">Tú aprendes: <b>${esc(r.aprendo||'—')}</b> · Tú enseñas: <b>${esc(r.enseno||'nada (Skill Learner)')}</b></div>
+    ${acciones}</div>`;
+}
+function vIntercambio(){
+  const s=sol(ui.p.id),m=me();if(!s||(s.de!==m.id&&s.para!==m.id))return '<p>No encontrado.</p>';
+  const o=otroDe(s,m.id),r=roles(s,m.id),ss=sesionesDe(s.id);
+  const msgs=db.mensajes.filter(x=>x.solicitud===s.id).sort((a,b)=>a.fecha.localeCompare(b.fecha));
+  let acciones='';
+  if(s.estado==='pendiente'&&s.para===m.id) acciones=`<div class="btns"><button class="btn" onclick="aceptar('${s.id}')">Aceptar</button><button class="btn sec" onclick="openRechazar('${s.id}')">Rechazar</button></div>`;
+  if(s.estado==='pendiente'&&s.de===m.id) acciones=`<div class="notice warn top8">Esperando respuesta de ${esc(first(o))}.</div><button class="btn danger sm" onclick="cancelarSolicitud('${s.id}')">Cancelar solicitud</button>`;
+  if(s.estado==='rechazada'&&s.de===m.id) acciones=`<div class="notice top8">${esc(first(o))} no pudo aceptar${s.motivoRechazo?': “'+esc(s.motivoRechazo)+'”':''}. Tu solicitud vuelve a búsqueda.</div><button class="btn" onclick="go('explorar',{q:sol('${s.id}').solicita})">Buscar a otra persona que enseñe ${esc(s.solicita)}</button>`;
+  const chatOn=['aceptada','completada'].includes(s.estado);
+  return `<button class="link" onclick="go('intercambios')">← Intercambios</button>
+  <div class="card top14">
+    <div class="row between"><span class="muted small">${s.codigo}</span><span class="st ${s.estado}">${estTxt[s.estado]}</span></div>
+    <div class="row top8" style="cursor:pointer" onclick="go('usuario',{id:'${o.id}'})">${avatar(o)}<div class="grow"><b>${esc(o.nombre)}</b><div class="muted small">${esc(o.ciudad)} · ${rating(o.id).prom!=null?'★ '+rating(o.id).prom.toFixed(1):'Nuevo'}</div></div><span class="muted">›</span></div>
+    <div class="sep"></div>
+    <div class="small">Tú aprendes: <b>${esc(r.aprendo||'—')}</b></div>
+    <div class="small">Tú enseñas: <b>${esc(r.enseno||'nada (plan Skill Learner)')}</b></div>
+    ${s.mensaje?`<p class="small muted top8">“${esc(s.mensaje)}”</p>`:''}
+    <div class="xs muted">Enviada ${fTs(s.fecha)}${s.fechaRespuesta?' · respondida '+fTs(s.fechaRespuesta):''}</div>
+    ${acciones}
+  </div>
+  ${s.estado==='aceptada'||ss.length?`<h2>Sesiones</h2>
+    ${ss.length?ss.map(x=>tarjetaSesion(x,false)).join(''):'<p class="muted">Aún no han agendado ninguna sesión.</p>'}
+    ${s.estado==='aceptada'?`<div class="btns"><button class="btn" onclick="openAgendar('${s.id}')">+ Agendar sesión</button><button class="btn sec" onclick="finalizar('${s.id}')">Finalizar intercambio</button></div>`:''}`:''}
+  ${chatOn?`<h2>Mensajes</h2>
+    <div class="card"><div class="msgs">${msgs.length?msgs.map(x=>`<div class="msg ${x.de===m.id?'me':''}">${esc(x.texto)}<small>${fTs(x.fecha)}</small></div>`).join(''):'<p class="muted small" style="text-align:center">Escríbele para acordar horarios y qué van a ver.</p>'}</div>
+    <form class="row" onsubmit="return enviarMsg(event,'${s.id}')"><input name="t" placeholder="Escribe un mensaje" autocomplete="off" required><button class="btn">Enviar</button></form></div>`:''}`;
+}
+function enviarMsg(e,id){e.preventDefault();const t=e.target.t.value.trim();if(!t)return false;const s=sol(id),m=me();
+  db.mensajes.push({id:uid('m'),solicitud:id,de:m.id,texto:t,fecha:nowIso()});
+  const o=otroDe(s,m.id);const ya=db.notifs.find(n=>n.para===o.id&&!n.leida&&n.link?.id===id&&n.texto.includes('te escribió'));
+  if(!ya)notify(o.id,`${m.nombre} te escribió en el intercambio ${s.codigo}.`,{v:'intercambio',id});
+  save();render();return false;}
+
+/* ============ AGENDA (FR-04) ============ */
+function tarjetaSesion(x,conPersona){
+  const s=sol(x.solicitud),m=me(),o=otroDe(s,m.id),venc=vencida(x),ev=yaEvalue(x.id,m.id);
+  const estado=x.estado==='programada'&&venc?'<span class="st pendiente">Por confirmar</span>':`<span class="st ${x.estado}">${{programada:'Programada',realizada:'Realizada',cancelada:'Cancelada'}[x.estado]}</span>`;
+  const lugar=/^https?:\/\//.test(x.lugar)?`<a href="${esc(x.lugar)}" target="_blank" rel="noopener">Unirse a la videollamada</a> <span class="muted xs">${esc(x.lugar)}</span>`:esc(x.lugar||'Lugar por definir');
+  let acc='';
+  if(x.estado==='programada') acc=`<button class="btn sm" onclick="marcarRealizada('${x.id}')">Marcar realizada</button><button class="btn sec sm" onclick="openAgendar('${s.id}','${x.id}')">Reprogramar</button><button class="btn danger sm" onclick="openCancelarSesion('${x.id}')">Cancelar</button>`;
+  if(x.estado==='realizada') acc=ev?`<span class="muted small">Tu evaluación: ${estrellas(promEval(ev))}</span>`:`<button class="btn sm" onclick="openEvaluar('${x.id}')">Evaluar sesión</button>`;
+  return `<div class="card">
+    <div class="row between"><b>${fFecha(x.fecha)} · ${x.hora}</b>${estado}</div>
+    ${conPersona?`<div class="small top8 row">${avatar(o,'sm')}<div>Con <b>${esc(o.nombre)}</b><div class="muted xs">Aprendes ${esc(roles(s,m.id).aprendo||'—')} · Enseñas ${esc(roles(s,m.id).enseno||'—')}</div></div></div>`:''}
+    <div class="small top8">${x.duracion} min · ${esc(x.modalidad)} · ${lugar}</div>
+    ${x.motivo?`<div class="xs muted">Motivo de cancelación: ${esc(x.motivo)}</div>`:''}
+    ${x.historial?.length?`<div class="xs muted">${x.historial.map(esc).join('<br>')}</div>`:''}
+    ${conPersona?`<button class="link xs" onclick="go('intercambio',{id:'${s.id}'})">Ver intercambio ${s.codigo}</button>`:''}
+    ${acc?`<div class="btns">${acc}</div>`:''}
+  </div>`;
+}
+function vAgenda(){
+  const l=misSesiones(),t=ui.tab.agenda;
+  const prox=l.filter(x=>x.estado==='programada').sort((a,b)=>(a.fecha+a.hora).localeCompare(b.fecha+b.hora));
+  const pas=l.filter(x=>x.estado!=='programada').sort((a,b)=>(b.fecha+b.hora).localeCompare(a.fecha+a.hora));
+  const sinEval=pas.filter(x=>x.estado==='realizada'&&!yaEvalue(x.id,db.actual)).length;
+  const lista=t==='proximas'?prox:pas;
+  return `<h1>Agenda</h1>
+  ${sinEval?`<div class="notice">Tienes ${sinEval} sesión${sinEval>1?'es':''} sin evaluar. Tu opinión ayuda a generar confianza en la comunidad.</div>`:''}
+  <div class="tabs"><button class="${t==='proximas'?'on':''}" onclick="ui.tab.agenda='proximas';render()">Programadas<span class="n">${prox.length}</span></button><button class="${t==='pasadas'?'on':''}" onclick="ui.tab.agenda='pasadas';render()">Realizadas y canceladas<span class="n">${pas.length}</span></button></div>
+  ${lista.length?lista.map(x=>tarjetaSesion(x,true)).join(''):`<div class="card empty">${t==='proximas'?'No tienes sesiones programadas. Las sesiones se agendan desde un intercambio en curso.':'Aún no hay sesiones pasadas.'}</div>`}`;
+}
+function openAgendar(solId,sesId){
+  const s=sol(solId),m=me(),o=otroDe(s,m.id),x=sesId?ses(sesId):null;
+  openModal(`<h2>${x?'Reprogramar sesión':'Agendar sesión'}</h2><p class="muted small">Formato FR-04 · Agenda de encuentros con ${esc(o.nombre)}</p>
+  <div class="notice small">Disponibilidad de ${esc(first(o))}: ${dispoTxt(o)}<br>Tu disponibilidad: ${dispoTxt(m)}</div>
+  <form onsubmit="return guardarSesion(event,'${solId}','${sesId||''}')">
+    <div class="row"><div class="grow"><label>Fecha</label><input type="date" name="fecha" min="${dIso(0)}" value="${x?x.fecha:dIso(1)}" required></div><div class="grow"><label>Hora</label><input type="time" name="hora" value="${x?x.hora:'18:00'}" required></div></div>
+    <div class="row"><div class="grow"><label>Duración</label><select name="duracion">${[30,60,90,120].map(d=>`<option value="${d}" ${(x?x.duracion:60)==d?'selected':''}>${d} min</option>`).join('')}</select></div>
+    <div class="grow"><label>Modalidad</label><select name="modalidad" onchange="document.getElementById('genlink').style.display=this.value==='Virtual'?'':'none'">${['Virtual','Presencial'].map(d=>`<option ${(x?x.modalidad:'Virtual')===d?'selected':''}>${d}</option>`).join('')}</select></div></div>
+    <label>Enlace de videollamada o lugar del encuentro</label><input name="lugar" id="lugar" value="${esc(x?x.lugar:'')}" placeholder="https://… o dirección" required>
+    <button type="button" class="link small" id="genlink" style="margin-top:6px;${(x?x.modalidad:'Virtual')==='Virtual'?'':'display:none'}" onclick="document.getElementById('lugar').value='https://meet.jit.si/SkillSwap-'+Math.random().toString(36).slice(2,10)">Generar enlace de videollamada gratuito (Jitsi Meet)</button>
+    <div class="btns"><button class="btn">${x?'Guardar cambios':'Agendar'}</button><button type="button" class="btn sec" onclick="closeModal()">Cancelar</button></div>
+  </form>`);
+}
+function guardarSesion(e,solId,sesId){
+  e.preventDefault();const f=e.target,s=sol(solId),m=me(),o=otroDe(s,m.id);
+  const d={fecha:f.fecha.value,hora:f.hora.value,duracion:+f.duracion.value,modalidad:f.modalidad.value,lugar:f.lugar.value.trim()};
+  if(sesId){const x=ses(sesId);x.historial=x.historial||[];x.historial.push(`Reprogramada por ${first(m)} (antes: ${fFecha(x.fecha)} ${x.hora})`);Object.assign(x,d);
+    notify(o.id,`${m.nombre} reprogramó la sesión de ${s.codigo} para el ${fFecha(d.fecha)} a las ${d.hora}.`,{v:'intercambio',id:solId});}
+  else{db.sesiones.push({id:uid('ses'),solicitud:solId,...d,estado:'programada',historial:[`Agendada por ${first(m)} el ${fTs(nowIso())}`]});
+    notify(o.id,`${m.nombre} agendó una sesión de ${s.codigo} para el ${fFecha(d.fecha)} a las ${d.hora}.`,{v:'intercambio',id:solId});}
+  closeModal();commit(sesId?'Sesión reprogramada':'Sesión agendada');return false;
+}
+function openCancelarSesion(id){openModal(`<h2>Cancelar sesión</h2><form onsubmit="return cancelarSesion(event,'${id}')"><label>Motivo de la cancelación</label><textarea name="motivo" required placeholder="Se le informará a la otra persona"></textarea><div class="btns"><button class="btn danger">Cancelar sesión</button><button type="button" class="btn sec" onclick="closeModal()">Volver</button></div></form>`);}
+function cancelarSesion(e,id){e.preventDefault();const x=ses(id),s=sol(x.solicitud),m=me();x.estado='cancelada';x.motivo=e.target.motivo.value.trim();
+  notify(otroDe(s,m.id).id,`${m.nombre} canceló la sesión del ${fFecha(x.fecha)} (${s.codigo}). Motivo: ${x.motivo}`,{v:'intercambio',id:s.id});closeModal();commit('Sesión cancelada');return false;}
+function marcarRealizada(id){const x=ses(id),s=sol(x.solicitud),m=me();x.estado='realizada';x.historial=x.historial||[];x.historial.push(`Marcada como realizada por ${first(m)}`);
+  notify(otroDe(s,m.id).id,`${m.nombre} marcó como realizada la sesión del ${fFecha(x.fecha)}. ¡Evalúala!`,{v:'agenda'});save();render();openEvaluar(id);}
+
+/* ============ EVALUACIÓN (FR-06) ============ */
+function rateField(name,label){return `<label>${label}</label><div class="rate">${[1,2,3,4,5].map(n=>`<button type="button" onclick="setRate(this,${n})">★</button>`).join('')}<input type="hidden" name="${name}"></div>`;}
+function setRate(b,n){const w=b.parentElement;w.querySelector('input').value=n;[...w.querySelectorAll('button')].forEach((x,i)=>x.classList.toggle('on',i<n));}
+function openEvaluar(id){
+  const x=ses(id),s=sol(x.solicitud),o=otroDe(s,db.actual);
+  openModal(`<h2>Evalúa tu sesión</h2><p class="muted small">Formato FR-06 · Evaluación posterior · con ${esc(o.nombre)}, ${fFecha(x.fecha)}</p>
+  <form onsubmit="return guardarEval(event,'${id}')">
+    ${rateField('puntualidad','Puntualidad')}${rateField('claridad','Claridad al explicar')}${rateField('respeto','Respeto')}${rateField('experiencia','Experiencia general')}
+    <label>Comentario (se muestra en su perfil)</label><textarea name="comentario" placeholder="¿Qué tal te fue?"></textarea>
+    <label>¿Hubo alguna novedad? (privado, solo lo ve la administración)</label><input name="novedades" placeholder="Ej.: llegó tarde, problemas de conexión…">
+    <div class="err" id="err"></div>
+    <div class="btns"><button class="btn">Enviar evaluación</button><button type="button" class="btn sec" onclick="closeModal()">Después</button></div>
+  </form>`);
+}
+function guardarEval(e,id){
+  e.preventDefault();const f=e.target,v=k=>+f[k].value;
+  if(['puntualidad','claridad','respeto','experiencia'].some(k=>!v(k))){$('#err').textContent='Califica los cuatro criterios.';return false;}
+  const x=ses(id),s=sol(x.solicitud),m=me(),o=otroDe(s,m.id);
+  db.evaluaciones.push({id:uid('e'),sesion:id,de:m.id,para:o.id,puntualidad:v('puntualidad'),claridad:v('claridad'),respeto:v('respeto'),experiencia:v('experiencia'),comentario:f.comentario.value.trim(),novedades:f.novedades.value.trim(),fecha:nowIso()});
+  notify(o.id,`${m.nombre} te dejó una evaluación.`,{v:'perfil'});closeModal();commit('¡Gracias por evaluar!');return false;
+}
+
+/* ============ PERFIL Y FICHA DE HABILIDADES (FR-02) ============ */
+function vPerfil(){
+  const m=me(),p=perfil(m),r=rating(m.id),pl=PLANES[m.plan];
+  return `<div class="row">${avatar(m,'lg')}<div class="grow"><h1 style="margin:0">${esc(m.nombre)}</h1><div class="muted">${esc(m.ciudad||'Sin ciudad')} · ${esc(m.correo)}</div><div>${estrellas(r.prom)} <span class="muted small">(${r.n})</span></div></div></div>
+  <div class="card top14"><div class="row between small"><span>Perfil completo</span><b>${p.pct}%</b></div><div class="bar top8"><i style="width:${p.pct}%"></i></div>${p.faltan.length?`<div class="xs muted top8">Falta: ${p.faltan.join(', ')}</div>`:''}</div>
+  <div class="card row click" onclick="go('planes')"><div class="grow"><b>Plan ${pl.nombre}</b><div class="muted small">${pl.precio?money(pl.precio)+' / mes (simulado)':'Sin costo'}</div></div><span class="btn ghost sm">Ver planes</span></div>
+  ${m.bio?`<p>${esc(m.bio)}</p>`:''}
+  <h2>Lo que enseño</h2>
+  ${m.ensena.length?m.ensena.map(s=>fichaSkill(s,true)).join(''):`<p class="muted">${m.plan==='learner'?'Con Skill Learner no es obligatorio, pero puedes agregar habilidades.':'Agrega al menos una habilidad para poder hacer intercambios.'}</p>`}
+  <button class="btn ghost sm" onclick="openHabilidad('ensena')">+ Agregar habilidad</button>
+  <h2>Lo que quiero aprender</h2>
+  <div>${m.aprende.map(a=>`<span class="chip p">${esc(a.nombre)}<span class="x" onclick="quitarHabilidad('aprende','${a.id}')">✕</span></span>`).join('')||'<span class="muted">Nada aún.</span>'}</div>
+  <button class="btn ghost sm top8" onclick="openHabilidad('aprende')">+ Agregar</button>
+  <h2>Disponibilidad</h2><p>${dispoTxt(m)}</p>
+  <div class="sep"></div>
+  <div class="btns" style="flex-direction:column">
+    <button class="btn sec block" onclick="go('editar')">Editar mis datos</button>
+    <button class="btn sec block" onclick="go('pqrs')">Soporte y PQRS</button>
+    <button class="btn sec block" onclick="cambiarUsuario()">Cambiar de usuario (demo)</button>
+    <button class="btn danger block" onclick="logout()">Cerrar sesión</button>
+  </div>
+  <p class="muted xs top14">Autorizaste el tratamiento de tus datos el ${m.fechaAutorizacion?fTs(m.fechaAutorizacion):'—'}.</p>`;
+}
+function openHabilidad(tipo){
+  const ens=tipo==='ensena';
+  $('#sug').innerHTML=Object.keys(SUGERENCIAS).map(s=>`<option value="${s}">`).join('');
+  openModal(`<h2>${ens?'Habilidad que enseño':'Quiero aprender'}</h2>${ens?'<p class="muted small">Formato FR-02 · Ficha de habilidades</p>':''}
+  <form onsubmit="return guardarHabilidad(event,'${tipo}')">
+    <label>Nombre de la habilidad</label><input name="nombre" list="sug" required placeholder="Ej.: Inglés, Excel, Guitarra" oninput="const c=SUGERENCIAS[Object.keys(SUGERENCIAS).find(k=>norm(k)===norm(this.value))];if(c)this.form.categoria.value=c">
+    <label>Categoría</label><select name="categoria">${CATS.map(c=>`<option>${c}</option>`).join('')}</select>
+    ${ens?`<div class="row"><div class="grow"><label>Tu nivel</label><select name="nivel">${NIVELES.map(n=>`<option ${n==='Intermedio'?'selected':''}>${n}</option>`).join('')}</select></div><div class="grow"><label>Modalidad</label><select name="modalidad">${MODALIDADES.map(n=>`<option>${n}</option>`).join('')}</select></div></div>
+    <label>¿Qué enseñas exactamente?</label><textarea name="descripcion" required placeholder="Ej.: conversación básica para viajar"></textarea>
+    <label>Requisitos para la otra persona (opcional)</label><input name="requisitos" placeholder="Ej.: tener guitarra">`:''}
+    <div class="err" id="err"></div>
+    <div class="btns"><button class="btn">Guardar</button><button type="button" class="btn sec" onclick="closeModal()">Cancelar</button></div>
+  </form>`);
+}
+function guardarHabilidad(e,tipo){
+  e.preventDefault();const f=e.target,m=me(),nombre=f.nombre.value.trim();
+  if(m[tipo].some(s=>norm(s.nombre)===norm(nombre))){$('#err').textContent='Ya la tienes registrada.';return false;}
+  m[tipo].push(tipo==='ensena'?sk(nombre,f.categoria.value,f.nivel.value,f.modalidad.value,f.descripcion.value.trim(),f.requisitos.value.trim()):ap(nombre,f.categoria.value));
+  if(ui.view!=='perfil')ui.view='perfil';closeModal();commit('Habilidad guardada');return false;
+}
+function quitarHabilidad(tipo,id){const m=me();m[tipo]=m[tipo].filter(s=>s.id!==id);commit('Habilidad eliminada');}
+function vEditar(){
+  const m=me();
+  return `<button class="link" onclick="go('perfil')">← Perfil</button><h1 class="top14">Editar mis datos</h1>
+  <form onsubmit="return guardarDatos(event)">
+    <label>Nombre completo</label><input name="nombre" value="${esc(m.nombre)}" required>
+    <label>Ciudad</label><input name="ciudad" value="${esc(m.ciudad)}" required>
+    <label>Sobre ti</label><textarea name="bio" placeholder="Cuéntale a la comunidad quién eres">${esc(m.bio)}</textarea>
+    <label>Días disponibles</label><div class="pills">${DIAS.map(d=>`<label><input type="checkbox" name="dias" value="${d}" ${m.disponibilidad.dias.includes(d)?'checked':''}>${d}</label>`).join('')}</div>
+    <label>Franja horaria</label><div class="pills">${FRANJAS.map(d=>`<label><input type="checkbox" name="franjas" value="${d}" ${m.disponibilidad.franjas.includes(d)?'checked':''}>${d}</label>`).join('')}</div>
+    <div class="btns"><button class="btn">Guardar</button><button type="button" class="btn sec" onclick="go('perfil')">Cancelar</button></div>
+  </form>`;
+}
+function guardarDatos(e){e.preventDefault();const f=e.target,m=me();m.nombre=f.nombre.value.trim();m.ciudad=f.ciudad.value.trim();m.bio=f.bio.value.trim();
+  m.disponibilidad={dias:[...f.querySelectorAll('[name=dias]:checked')].map(x=>x.value),franjas:[...f.querySelectorAll('[name=franjas]:checked')].map(x=>x.value)};
+  save();go('perfil');toast('Datos actualizados');return false;}
+
+/* ============ PLANES ============ */
+function vPlanes(){
+  const m=me();
+  return `<button class="link" onclick="go('perfil')">← Perfil</button><h1 class="top14">Planes</h1>
+  <p class="muted small">Pagos simulados: al activar un plan no se cobra nada.</p>
+  ${Object.entries(PLANES).map(([k,p])=>`<div class="card" style="${m.plan===k?'border-color:var(--pink)':''}">
+    <div class="row between"><h3>${p.nombre}</h3>${m.plan===k?'<span class="chip p">Tu plan</span>':''}</div>
+    <div style="font-size:22px;font-weight:700;color:var(--pink)">${p.precio?money(p.precio)+'<span class="muted small"> / mes</span>':'Gratis'}</div>
+    <ul class="small" style="padding-left:18px;margin:8px 0">${p.desc.map(d=>`<li>${d}</li>`).join('')}</ul>
+    ${m.plan!==k?`<button class="btn sm" onclick="activarPlan('${k}')">Activar ${p.nombre}</button>`:''}
+  </div>`).join('')}
+  <div class="card"><h3>Suscripción anual</h3><p class="small muted">Con descuento por pago anticipado (por definir).</p><h3 class="top8">Alianzas con instituciones</h3><p class="small muted">Colegios, universidades o empresas pueden implementar SkillSwap para su comunidad.</p></div>`;
+}
+function activarPlan(k){confirmar('Activar '+PLANES[k].nombre,`Es una simulación: no se realiza ningún cobro. ${PLANES[k].precio?'Valor de referencia: '+money(PLANES[k].precio)+' al mes.':''}`,'Activar',()=>{me().plan=k;commit('Plan '+PLANES[k].nombre+' activado');});}
+
+/* ============ PQRS (FR-05 / PR-01) ============ */
+function plazo(p){const v=new Date(p.fecha).getTime()+PQRS_CAT[p.categoria].horas*3600e3,h=Math.round((v-Date.now())/3600e3);return {h,txt:h>=0?`vence en ${h} h`:`vencida hace ${-h} h`};}
+const pqEst = p => p.estado==='Cerrada'?'cerrada':p.estado==='En trámite'?'tramite':'recibida';
+function tarjetaPqrs(p,admin){
+  const u=user(p.usuario),pz=plazo(p);
+  return `<div class="card"><div class="row between"><b>${p.codigo}</b><span class="st ${pqEst(p)}">${p.estado}</span></div>
+  <div class="small top8"><b>${esc(p.tipo)}</b> · Cat. ${p.categoria} (${PQRS_CAT[p.categoria].nombre}) · ${esc(p.asunto)}</div>
+  ${admin?`<div class="xs muted">De ${esc(u?.nombre||'')} · ${esc(u?.correo||'')}</div>`:''}
+  <p class="small">${esc(p.descripcion)}</p>
+  <div class="xs muted">Radicada ${fTs(p.fecha)}${p.estado!=='Cerrada'?` · <span style="color:${pz.h<0?'var(--bad)':'var(--warn)'}">${pz.txt}</span>`:` · respondida ${fTs(p.fechaRespuesta)}`}</div>
+  ${p.respuesta?`<div class="notice top8"><b>Respuesta:</b> ${esc(p.respuesta)}</div>`:''}
+  ${admin&&p.estado!=='Cerrada'?`<div class="btns">${p.estado==='Recibida'?`<button class="btn sec sm" onclick="tramitar('${p.id}')">Pasar a trámite</button>`:''}<button class="btn sm" onclick="openResponder('${p.id}')">Responder y cerrar</button></div>`:''}</div>`;
+}
+function vPqrs(){
+  const mias=db.pqrs.filter(p=>p.usuario===db.actual).sort((a,b)=>b.fecha.localeCompare(a.fecha));
+  return `<button class="link" onclick="go('perfil')">← Perfil</button><h1 class="top14">Soporte y PQRS</h1>
+  <p class="muted small">Peticiones, quejas, reclamos y sugerencias. Cada radicado recibe un número consecutivo y una respuesta escrita.</p>
+  <div class="card"><form onsubmit="return crearPqrs(event)">
+    <div class="row"><div class="grow"><label style="margin-top:0">Tipo</label><select name="tipo">${PQRS_TIPOS.map(t=>`<option>${t}</option>`).join('')}</select></div>
+    <div class="grow"><label style="margin-top:0">Tema</label><select name="categoria">${Object.entries(PQRS_CAT).map(([k,c])=>`<option value="${k}">${c.nombre} (máx. ${c.horas} h)</option>`).join('')}</select></div></div>
+    <label>Asunto</label><input name="asunto" required>
+    <label>Descripción</label><textarea name="descripcion" required></textarea>
+    <button class="btn top8">Radicar</button>
+  </form></div>
+  <h2>Mis radicados</h2>
+  ${mias.length?mias.map(p=>tarjetaPqrs(p,false)).join(''):'<p class="muted">No has radicado ninguna PQRS.</p>'}`;
+}
+function crearPqrs(e){e.preventDefault();const f=e.target;db.cont.pqrs++;
+  const p={id:uid('pq'),codigo:'PQRS-'+new Date().getFullYear()+'-'+String(db.cont.pqrs).padStart(4,'0'),usuario:db.actual,tipo:f.tipo.value,categoria:f.categoria.value,asunto:f.asunto.value.trim(),descripcion:f.descripcion.value.trim(),estado:'Recibida',fecha:nowIso(),respuesta:null,fechaRespuesta:null};
+  db.pqrs.push(p);notify('admin',`Nueva PQRS ${p.codigo} (${p.tipo}, categoría ${p.categoria}).`,null);
+  commit(`Radicado ${p.codigo}. Te responderemos en máximo ${PQRS_CAT[p.categoria].horas} h.`);return false;}
+function tramitar(id){const p=db.pqrs.find(x=>x.id===id);p.estado='En trámite';notify(p.usuario,`Tu PQRS ${p.codigo} está en trámite.`,{v:'pqrs'});commit('PQRS en trámite');}
+function openResponder(id){const p=db.pqrs.find(x=>x.id===id);openModal(`<h2>Responder ${p.codigo}</h2><p class="small">${esc(p.asunto)}: ${esc(p.descripcion)}</p><form onsubmit="return responder(event,'${id}')"><label>Respuesta escrita</label><textarea name="r" required></textarea><div class="btns"><button class="btn">Enviar y cerrar</button><button type="button" class="btn sec" onclick="closeModal()">Volver</button></div></form>`);}
+function responder(e,id){e.preventDefault();const p=db.pqrs.find(x=>x.id===id);p.respuesta=e.target.r.value.trim();p.estado='Cerrada';p.fechaRespuesta=nowIso();
+  notify(p.usuario,`Respondimos tu PQRS ${p.codigo}.`,{v:'pqrs'});closeModal();commit('PQRS cerrada');return false;}
+
+/* ============ NOTIFICACIONES ============ */
+function itemNotif(n){return `<div class="card click row" onclick="abrirNotif('${n.id}')" style="${n.leida?'':'border-color:var(--pink)'}"><div class="grow small">${esc(n.texto)}<div class="muted xs">${hace(n.fecha)}</div></div>${n.leida?'':'<span class="chip p">nueva</span>'}</div>`;}
+function abrirNotif(id){const n=db.notifs.find(x=>x.id===id);n.leida=true;save();if(n.link){const {v,...p}=n.link;go(v,p);}else render();}
+function vNotifs(){
+  const l=db.notifs.filter(n=>n.para===db.actual).sort((a,b)=>b.fecha.localeCompare(a.fecha));
+  return `<div class="row between"><h1>Notificaciones</h1>${l.some(n=>!n.leida)?`<button class="link small" onclick="db.notifs.forEach(n=>{if(n.para===db.actual)n.leida=true});commit()">Marcar todas como leídas</button>`:''}</div>
+  ${l.length?l.map(itemNotif).join(''):'<p class="muted">No tienes notificaciones.</p>'}`;
+}
+
+/* ============ ADMINISTRACIÓN E INDICADORES (KPI) ============ */
+function calcKpis(){
+  const us=personas(),hoy=new Date();
+  const resp=db.solicitudes.filter(s=>['aceptada','completada','rechazada'].includes(s.estado));
+  const cerr=db.sesiones.filter(x=>x.estado!=='programada'||vencida(x));
+  const real=cerr.filter(x=>x.estado==='realizada');
+  const prom=avg(db.evaluaciones.map(promEval));
+  const resPq=db.pqrs.filter(p=>p.fechaRespuesta);
+  const tpr=avg(resPq.map(p=>(new Date(p.fechaRespuesta)-new Date(p.fecha))/3600e3));
+  const pct=(a,b)=>b?a/b*100:null;
+  const completos=us.filter(u=>perfil(u).pct===100).length;
+  return [
+    {k:'IPC',n:'Perfiles completos',v:pct(completos,us.length),meta:'≥ 90%',ok:v=>v>=KPI_META.IPC,f:`${completos} de ${us.length} perfiles completos`,u:'%'},
+    {k:'TEC',n:'Coincidencias aceptadas',v:pct(resp.filter(s=>s.estado!=='rechazada').length,resp.length),meta:'≥ 70%',ok:v=>v>=KPI_META.TEC,f:`${resp.filter(s=>s.estado!=='rechazada').length} aceptadas de ${resp.length} solicitudes respondidas`,u:'%'},
+    {k:'CEP',n:'Encuentros ejecutados',v:pct(real.length,cerr.length),meta:'≥ 85%',ok:v=>v>=KPI_META.CEP,f:`${real.length} realizados de ${cerr.length} encuentros agendados con fecha cumplida`,u:'%'},
+    {k:'NSU',n:'Satisfacción del usuario',v:prom!=null?prom/5*100:null,meta:'≥ 80%',ok:v=>v>=KPI_META.NSU,f:`${db.evaluaciones.length} evaluaciones, promedio ${prom!=null?prom.toFixed(1):'—'} sobre 5`,u:'%'},
+    {k:'TPR',n:'Tiempo promedio de respuesta PQRS',v:tpr,meta:'≤ 24 h',ok:v=>v<=KPI_META.TPR,f:`${resPq.length} PQRS respondidas de ${db.pqrs.length}`,u:' h'}
+  ];
+}
+function vAdmin(){
+  const t=ui.tab.admin,tabs={kpi:'Indicadores',usuarios:'Usuarios',inter:'Intercambios',sesiones:'Sesiones',pqrs:'PQRS',datos:'Datos'};
+  const abiertas=db.pqrs.filter(p=>p.estado!=='Cerrada').length;
+  let body='';
+  if(t==='kpi'){
+    const ks=calcKpis();
+    const dem={};personas().forEach(u=>u.aprende.forEach(a=>dem[a.categoria]=(dem[a.categoria]||0)+1));
+    const totDem=Object.values(dem).reduce((a,b)=>a+b,0)||1;
+    body=`<div class="grid3"><div class="stat"><b>${personas().length}</b><span>usuarios</span></div><div class="stat"><b>${db.solicitudes.length}</b><span>solicitudes</span></div><div class="stat"><b>${db.sesiones.length}</b><span>encuentros agendados</span></div></div>
+    ${ks.map(k=>{const val=k.v==null?'—':k.u==='%'?k.v.toFixed(1)+'%':k.v.toFixed(1)+' h';const ok=k.v!=null&&k.ok(k.v);
+      return `<div class="card"><div class="kpi"><div class="v">${val}</div><div class="grow"><div class="row between"><b>${k.k} · ${k.n}</b></div><div class="muted xs">${k.f}</div><div class="row between top8"><span class="xs">Meta ${k.meta}</span>${k.v==null?'<span class="st pendiente">Sin datos</span>':`<span class="st ${ok?'cumple':'nocumple'}">${ok?'Cumple':'No cumple'}</span>`}</div></div></div></div>`;}).join('')}
+    <h2>Áreas de mayor demanda</h2><div class="card">${Object.entries(dem).sort((a,b)=>b[1]-a[1]).map(([c,n])=>`<div class="small row between top8"><span>${c}</span><b>${Math.round(n/totDem*100)}%</b></div><div class="bar"><i style="width:${n/totDem*100}%"></i></div>`).join('')}</div>
+    <p class="muted xs">Los indicadores se calculan en vivo con los datos de la aplicación.</p>`;
+  }
+  if(t==='usuarios') body=`<div class="tbl"><table><tr><th>Usuario</th><th>Ciudad</th><th>Plan</th><th>Perfil</th><th>★</th></tr>${personas().map(u=>{const p=perfil(u),r=rating(u.id);return `<tr><td><b>${esc(u.nombre)}</b><br><span class="muted">${esc(u.correo)}</span></td><td>${esc(u.ciudad)}</td><td>${PLANES[u.plan].nombre}</td><td>${p.pct}%</td><td>${r.prom!=null?r.prom.toFixed(1):'—'}</td></tr>`;}).join('')}</table></div>`;
+  if(t==='inter') body=`<div class="tbl"><table><tr><th>Código</th><th>Solicita → recibe</th><th>Aprende / ofrece</th><th>Estado</th></tr>${[...db.solicitudes].reverse().map(s=>`<tr><td>${s.codigo}</td><td>${esc(user(s.de)?.nombre)} → ${esc(user(s.para)?.nombre)}</td><td>${esc(s.solicita)} / ${esc(s.ofrece||'—')}</td><td><span class="st ${s.estado}">${estTxt[s.estado]}</span></td></tr>`).join('')}</table></div>`;
+  if(t==='sesiones') body=`<div class="tbl"><table><tr><th>Fecha</th><th>Intercambio</th><th>Modalidad</th><th>Estado</th><th>Eval.</th></tr>${[...db.sesiones].sort((a,b)=>(b.fecha+b.hora).localeCompare(a.fecha+a.hora)).map(x=>{const s=sol(x.solicitud);const ev=db.evaluaciones.filter(e=>e.sesion===x.id);const nov=ev.filter(e=>e.novedades).map(e=>e.novedades);return `<tr><td>${fFecha(x.fecha)} ${x.hora}</td><td>${s?.codigo||''}</td><td>${esc(x.modalidad)}</td><td>${x.estado==='programada'&&vencida(x)?'Por confirmar':x.estado}${x.motivo?'<br><span class="muted">'+esc(x.motivo)+'</span>':''}</td><td>${ev.length}/2${nov.length?'<br><span style="color:var(--warn)">Novedad: '+nov.map(esc).join('; ')+'</span>':''}</td></tr>`;}).join('')}</table></div>`;
+  if(t==='pqrs'){const l=[...db.pqrs].sort((a,b)=>(a.estado==='Cerrada')-(b.estado==='Cerrada')||b.fecha.localeCompare(a.fecha));body=l.map(p=>tarjetaPqrs(p,true)).join('')||'<p class="muted">Sin PQRS.</p>';}
+  if(t==='datos') body=`<div class="card"><h3>Gestión documental</h3><p class="small muted">Copia los registros para archivarlos o pegarlos en Excel. Los datos de esta demostración se guardan solo en este navegador.</p>
+    <div class="btns"><button class="btn sm" onclick="copiar(csvUsuarios(),'Usuarios copiados (CSV)')">Copiar usuarios (CSV)</button><button class="btn sm" onclick="copiar(csvSolicitudes(),'Solicitudes copiadas (CSV)')">Copiar solicitudes (CSV)</button><button class="btn sec sm" onclick="copiar(JSON.stringify({...db,actual:null},null,2),'Base de datos copiada (JSON)')">Copiar todo (JSON)</button></div></div>
+    <div class="card"><h3>Protección de datos</h3><p class="small muted">Cada usuario autoriza el tratamiento de sus datos al registrarse (Ley 1581 de 2012). En esta demo las contraseñas son ficticias y no deben usarse datos reales.</p></div>
+    <div class="card"><h3>Reiniciar demostración</h3><p class="small muted">Borra todo lo que se ha hecho y vuelve a los datos de ejemplo.</p><button class="btn danger sm" onclick="confirmar('Reiniciar datos','Se borrarán los usuarios, solicitudes y sesiones creados durante la demostración.','Reiniciar',reiniciar,true)">Reiniciar</button></div>`;
+  return `<h1>Panel administrativo</h1>
+  <div class="tabs">${Object.entries(tabs).map(([k,n])=>`<button class="${t===k?'on':''}" onclick="ui.tab.admin='${k}';render()">${n}${k==='pqrs'&&abiertas?`<span class="n">${abiertas}</span>`:''}</button>`).join('')}</div>${body}`;
+}
+const csvCell = v => '"'+String(v??'').replace(/"/g,'""')+'"';
+function csvUsuarios(){return [['Nombre','Correo','Ciudad','Plan','Enseña','Aprende','Perfil %','Autoriza datos']].concat(personas().map(u=>[u.nombre,u.correo,u.ciudad,PLANES[u.plan].nombre,u.ensena.map(s=>s.nombre).join('; '),u.aprende.map(s=>s.nombre).join('; '),perfil(u).pct,u.autorizaDatos?'Sí':'No'])).map(r=>r.map(csvCell).join(',')).join('\n');}
+function csvSolicitudes(){return [['Código','Solicita','Recibe','Aprende','Ofrece','Estado','Fecha']].concat(db.solicitudes.map(s=>[s.codigo,user(s.de)?.nombre,user(s.para)?.nombre,s.solicita,s.ofrece,estTxt[s.estado],fTs(s.fecha)])).map(r=>r.map(csvCell).join(',')).join('\n');}
+function copiar(txt,msg){
+  const fallback=()=>openModal(`<h2>Copia el texto</h2><p class="muted small">Selecciónalo y cópialo manualmente.</p><textarea style="min-height:240px" onfocus="this.select()">${esc(txt)}</textarea><button class="btn sec block top8" onclick="closeModal()">Cerrar</button>`);
+  try{navigator.clipboard.writeText(txt).then(()=>toast(msg),fallback);}catch(e){fallback();}
+}
+function reiniciar(){const a=db.actual;db=seed();db.actual=user(a)?a:null;ui.tab.admin='kpi';commit('Datos de demostración restaurados');}
+
+/* ============ INICIO DE LA APP ============ */
+load();
+render();
+</script>
+</body>
+</html>

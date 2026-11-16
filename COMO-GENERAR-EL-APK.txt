@@ -1,0 +1,81 @@
+SKILLSWAP · CÓMO GENERAR EL APK
+================================
+
+Esta carpeta es el proyecto de Android de la app. Adentro está la maqueta
+(app/src/main/assets/index.html) y se muestra a pantalla completa, con ícono
+propio. Los datos se guardan en el teléfono.
+
+------------------------------------------------------------
+OPCIÓN 1 · GitHub, gratis y sin instalar nada (unos 10 minutos)
+------------------------------------------------------------
+1. Descomprime este .zip en tu computador.
+2. Entra a github.com y crea una cuenta (si no tienes).
+3. Arriba a la derecha: "+" > "New repository".
+   Nombre: skillswap. Puede ser privado. Clic en "Create repository".
+4. En la página del repositorio vacío, clic en "uploading an existing file".
+   Arrastra TODO lo que hay dentro de la carpeta SkillSwap-Android
+   (las carpetas app y gradle, y los archivos gradlew, settings.gradle, etc.).
+   Abajo, clic en "Commit changes".
+5. Ve a la pestaña "Actions".
+   - Si ya aparece "Generar APK" ejecutándose, espera.
+   - Si NO aparece nada (pasa en Mac, porque la carpeta .github está oculta):
+     clic en "set up a workflow yourself", borra lo que aparece, pega el
+     contenido del archivo .github/workflows/build.yml (está copiado al final
+     de este documento) y clic en "Commit changes".
+6. Espera unos 5 minutos hasta que salga el chulo verde ✓.
+7. Abre esa ejecución y, abajo, en "Artifacts", descarga "SkillSwap-APK".
+   Es un .zip: descomprímelo y adentro está app-debug.apk.
+8. Pásalo al teléfono (WhatsApp, Drive, cable…), ábrelo y acepta
+   "Instalar apps de fuentes desconocidas" cuando Android lo pida.
+
+Cada vez que subas una versión nueva de index.html a
+app/src/main/assets/, GitHub genera un APK nuevo solo.
+
+------------------------------------------------------------
+OPCIÓN 2 · Android Studio (si ya lo tienes instalado)
+------------------------------------------------------------
+1. Android Studio > Open > elige la carpeta SkillSwap-Android.
+2. Espera a que termine "Gradle sync".
+3. Menú Build > Build App Bundle(s) / APK(s) > Build APK(s).
+4. Clic en "locate": ahí está app-debug.apk.
+
+------------------------------------------------------------
+NOTAS
+------------------------------------------------------------
+- Es un APK de prueba (debug): sirve para instalarlo en tu teléfono y
+  mostrarlo. Para publicarlo en Play Store hay que firmarlo con una llave
+  propia.
+- Cuentas de prueba: laura@demo.co / 1234 (y las demás de la demo).
+  Administración: admin@skillswap.co / admin.
+- El botón "atrás" del teléfono cierra las ventanas emergentes y vuelve al
+  inicio antes de salir de la app.
+
+------------------------------------------------------------
+CONTENIDO DE .github/workflows/build.yml (para el paso 5)
+------------------------------------------------------------
+name: Generar APK
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: android-actions/setup-android@v3
+
+      - name: Compilar APK
+        run: bash ./gradlew assembleDebug --no-daemon
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: SkillSwap-APK
+          path: app/build/outputs/apk/debug/app-debug.apk
